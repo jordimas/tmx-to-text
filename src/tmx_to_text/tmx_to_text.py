@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2017 Jordi Mas i Hernandez <jmas@softcatala.org>
+# Copyright (c) 2021 Jordi Mas i Hernandez <jmas@softcatala.org>
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -23,65 +23,9 @@ from lxml import etree
 import xml.etree.ElementTree as ET
 import tracemalloc
 import datetime
+from converttmx import ConvertTmx
 
 
-class ConvertTmx():
-
-    def __init__(self, input_file, en_filename, ca_filename):
-        self.input_file = input_file
-        self.en_filename = en_filename
-        self.ca_filename = ca_filename
-
-    def convert(self, source_language, target_language):
-        parser = etree.XMLParser(recover=True)
-        tree = ET.parse(self.input_file, parser=parser)
-        root = tree.getroot()
-        entries = 0
-
-        tf_en = open(self.en_filename, 'w')
-        tf_ca = open(self.ca_filename, 'w')
-
-        for tu_entry in root.iter('tu'):
-
-            entry_id = None
-            if 'tuid' in tu_entry.attrib:
-                if len(tu_entry.attrib['tuid']):
-                    entry_id = 'id: {0}'.format(tu_entry.attrib['tuid'])
-
-            source = ''
-            translation = ''
-            for tuv_entry in tu_entry:
-                if tuv_entry.tag != 'tuv':
-                    continue
-
-                if '{http://www.w3.org/XML/1998/namespace}lang' in tuv_entry.attrib:
-                    llengua = tuv_entry.attrib['{http://www.w3.org/XML/1998/namespace}lang'].lower()
-                else:
-                    llengua = tuv_entry.attrib['lang'].lower()
-
-                for seg_entry in tuv_entry.iter('seg'):
-                    if llengua == source_language:
-                        source = seg_entry.text
-                    elif llengua == target_language:
-                        translation = seg_entry.text
-
-            if source is None or translation is None:
-                continue
-
-            source = source.rstrip().replace("\n", "")
-            translation = translation.rstrip().replace("\n", "")
-
-            if len(source) == 0 or len(translation) == 0:
-                continue
-
-            tf_en.write(source + "\n")
-            tf_ca.write(translation + "\n")
-
-            entries = entries + 1
-
-        tf_en.close()
-        tf_ca.close()
-        print("Wrote {0} strings".format(entries))
 
 def read_parameters():
     parser = OptionParser()
@@ -155,10 +99,10 @@ def main():
 
 
     current, peak = tracemalloc.get_traced_memory()
-    print(f"Current memory usage is {current / 10**6}MB; Peak was {peak / 10**6}MB")
+#    print(f"Current memory usage is {current / 10**6}MB; Peak was {peak / 10**6}MB")
     tracemalloc.stop()
     s = 'Execution time: {0}'.format(datetime.datetime.now() - start_time)
-    print(s)
+#    print(s)
 
 if __name__ == "__main__":
     main()
