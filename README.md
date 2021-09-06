@@ -1,4 +1,7 @@
 [![GitHub Actions status](https://github.com/jordimas/tmx-to-text/workflows/Tests/badge.svg)](https://github.com/jordimas/tmx-to-text/actions)
+[![PyPI version](https://img.shields.io/pypi/v/tmx-to-text.svg?logo=pypi&logoColor=FFE873)](https://pypi.org/project/tmx-to-text/)
+[![PyPI downloads](https://img.shields.io/pypi/dm/tmx-to-text.svg)](https://pypistats.org/packages/tmx-to-text)
+
 
 # Introduction
 
