@@ -19,7 +19,6 @@
 
 from src.tmx_to_text.converttmx import ConvertTmx
 import unittest
-import tempfile
 from os import path
 
 
@@ -28,9 +27,6 @@ class TestConvertTmx(unittest.TestCase):
     def _get_tmx_file(self, filename):
         tmx_file = path.dirname(path.realpath(__file__))
         tmx_file += '/data/{0}'.format(filename)
-
-#        tmpfile = tempfile.NamedTemporaryFile()
-#        po_filename = tmpfile.name + ".po"
 
         return tmx_file
 
