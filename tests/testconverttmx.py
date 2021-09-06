@@ -49,8 +49,8 @@ class TestConvertTmx(unittest.TestCase):
         with open(TARGET) as file:
             target_lines = file.readlines()
 
-        self.assertEquals(source[0], '"Aligner" aligner utility')
-        self.assertEquals(target[0], 'Alineador de textos "Aligner"')
+        self.assertEquals(source_lines[0].rstrip(), '"Aligner" aligner utility')
+        self.assertEquals(target_lines[0].rstrip(), 'Alineador de textos "Aligner"')
 
 if __name__ == '__main__':
     unittest.main()
