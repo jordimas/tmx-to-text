@@ -10,7 +10,7 @@ README = (HERE / "README.md").read_text()
 # This call to setup() does all the work
 setup(
     name="tmx-to-text",
-    version="0.1.0",
+    version="0.1.1",
     description="Converts TMX files to text files",
     long_description=README,
     long_description_content_type="text/markdown",
@@ -23,12 +23,12 @@ setup(
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.7",
     ],
-    packages=["src/tmx-to-text"],
+    packages=["src/tmx_to_text"],
     include_package_data=True,
     install_requires=["lxml"],
     entry_points={
         "console_scripts": [
-            "tmx-to-text=__main__:main",
+            "tmx-to-text=src.tmx_to_text.tmx_to_text:main",
         ]
     },
 )
