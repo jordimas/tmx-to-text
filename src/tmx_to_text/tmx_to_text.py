@@ -23,7 +23,7 @@ from lxml import etree
 import xml.etree.ElementTree as ET
 import tracemalloc
 import datetime
-from converttmx import ConvertTmx
+from .converttmx import ConvertTmx
 
 
 
