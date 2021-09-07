@@ -20,7 +20,7 @@
 from src.tmx_to_text.converttmx import ConvertTmx
 import unittest
 from os import path
-
+import tempfile
 
 class TestConvertTmx(unittest.TestCase):
 
@@ -32,17 +32,17 @@ class TestConvertTmx(unittest.TestCase):
 
 
     def test_convertion_omegat(self):
-        SOURCE = "source.txt"
-        TARGET = "target.txt"
+        source_file = tempfile.NamedTemporaryFile().name
+        target_file = tempfile.NamedTemporaryFile().name
 
         tmx_file = self._get_tmx_file('omegat.tmx')
-        convertTmx = ConvertTmx(tmx_file, SOURCE, TARGET)
+        convertTmx = ConvertTmx(tmx_file, source_file, target_file)
         convertTmx.convert("en", "ca")
 
-        with open(SOURCE) as file:
+        with open(source_file) as file:
             source_lines = file.readlines()
 
-        with open(TARGET) as file:
+        with open(target_file) as file:
             target_lines = file.readlines()
 
         self.assertEquals(1, len(source_lines))
