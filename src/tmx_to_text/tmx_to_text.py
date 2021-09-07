@@ -68,6 +68,15 @@ def read_parameters():
         help='Filename prefix'
     )
 
+    parser.add_option(
+        '-d',
+        '--debug',
+        action='store_true',
+        dest='debug',
+        default=False,
+        help=u'Debug memory and execution time'
+    )
+
     (options, args) = parser.parse_args()
     if options.tmx_file is None:
         parser.error('TMX file not given')
@@ -75,14 +84,16 @@ def read_parameters():
     if options.target_language is None:
         parser.error('target_language file not given')
 
-    return options.tmx_file, options.source_language, options.target_language, options.prefix
+    return options.tmx_file, options.source_language, options.target_language, options.prefix, options.debug
 
+
+import resource
 
 def main():
 
     print("Converts TMX into two text files")
 
-    tmx_file, source, target, prefix = read_parameters()
+    tmx_file, source, target, prefix, debug = read_parameters()
 
     if len(prefix) > 0:
         prefix = prefix + "."
@@ -90,19 +101,22 @@ def main():
     txt_en_file = f'{prefix}{source}-{target}.{source}'
     txt_ca_file = f'{prefix}{source}-{target}.{target}'
 
-    tracemalloc.start()
-
-    start_time = datetime.datetime.now()
+    if debug:
+        #tracemalloc.start()
+        start_time = datetime.datetime.now()
 
     convert = ConvertTmx(tmx_file, txt_en_file, txt_ca_file)
     convert.convert(source, target)
 
+    if debug:
+        #current, peak = tracemalloc.get_traced_memory()
+        #print(f"Current memory usage is {current / 10**6}MB; Peak was {peak / 10**6}MB")
+        #tracemalloc.stop()
+        max_rss = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / 1024 
+        print(f"max_rss {max_rss} MB")
 
-    current, peak = tracemalloc.get_traced_memory()
-#    print(f"Current memory usage is {current / 10**6}MB; Peak was {peak / 10**6}MB")
-    tracemalloc.stop()
-    s = 'Execution time: {0}'.format(datetime.datetime.now() - start_time)
-#    print(s)
+        s = 'Execution time: {0}'.format(datetime.datetime.now() - start_time)
+        print(s)
 
 if __name__ == "__main__":
     main()
