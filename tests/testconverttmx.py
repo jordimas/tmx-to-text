@@ -20,7 +20,7 @@
 from src.tmx_to_text.converttmx import ConvertTmx
 import unittest
 from os import path
-
+import tempfile
 
 class TestConvertTmx(unittest.TestCase):
 
@@ -32,21 +32,65 @@ class TestConvertTmx(unittest.TestCase):
 
 
     def test_convertion_omegat(self):
-        SOURCE = "source.txt"
-        TARGET = "target.txt"
+        source_file = tempfile.NamedTemporaryFile().name
+        target_file = tempfile.NamedTemporaryFile().name
 
-        tmx_file = self._get_tmx_file('omegat.tmx')
-        convertTmx = ConvertTmx(tmx_file, SOURCE, TARGET)
+        tmx_file = self._get_tmx_file('simple.tmx')
+        convertTmx = ConvertTmx(tmx_file, source_file, target_file)
         convertTmx.convert("en", "ca")
 
-        with open(SOURCE) as file:
+        with open(source_file) as file:
             source_lines = file.readlines()
 
-        with open(TARGET) as file:
+        with open(target_file) as file:
             target_lines = file.readlines()
 
+        self.assertEquals(1, len(source_lines))
+        self.assertEquals(1, len(target_lines))
         self.assertEquals(source_lines[0].rstrip(), '"Aligner" aligner utility')
         self.assertEquals(target_lines[0].rstrip(), 'Alineador de textos "Aligner"')
+
+    def test_convertion_omegat_lang(self):
+        source_file = tempfile.NamedTemporaryFile().name
+        target_file = tempfile.NamedTemporaryFile().name
+
+        tmx_file = self._get_tmx_file('simple-lang.tmx')
+        convertTmx = ConvertTmx(tmx_file, source_file, target_file)
+        convertTmx.convert("en", "ca")
+
+        with open(source_file) as file:
+            source_lines = file.readlines()
+
+        with open(target_file) as file:
+            target_lines = file.readlines()
+
+        self.assertEquals(1, len(source_lines))
+        self.assertEquals(1, len(target_lines))
+        self.assertEquals(source_lines[0].rstrip(), '"Aligner" aligner utility')
+        self.assertEquals(target_lines[0].rstrip(), 'Alineador de textos "Aligner"')
+
+    def test_convertion_omegat_lang2(self):
+        source_file = tempfile.NamedTemporaryFile().name
+        target_file = tempfile.NamedTemporaryFile().name
+
+        tmx_file = self._get_tmx_file('error.tmx')
+        convertTmx = ConvertTmx(tmx_file, source_file, target_file)
+        convertTmx.convert("en", "ca")
+
+        with open(source_file) as file:
+            source_lines = file.readlines()
+
+        with open(target_file) as file:
+            target_lines = file.readlines()
+
+        self.assertEquals(2, len(source_lines))
+        self.assertEquals(2, len(target_lines))
+        self.assertEquals(source_lines[0].rstrip(), 'And, in the best case, freedom will compensate us.')
+        self.assertEquals(target_lines[0].rstrip(), 'I que, en el millor dels casos, ens recompensarà amb llibertat.^C»')
+
+        self.assertEquals(source_lines[1].rstrip(), '"Aligner" aligner utility')
+        self.assertEquals(target_lines[1].rstrip(), 'Alineador de textos "Aligner"')
+
 
 if __name__ == '__main__':
     unittest.main()
