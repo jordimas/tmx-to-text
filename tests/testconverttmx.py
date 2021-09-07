@@ -45,6 +45,8 @@ class TestConvertTmx(unittest.TestCase):
         with open(TARGET) as file:
             target_lines = file.readlines()
 
+        self.assertEquals(1, len(source_lines))
+        self.assertEquals(1, len(target_lines))
         self.assertEquals(source_lines[0].rstrip(), '"Aligner" aligner utility')
         self.assertEquals(target_lines[0].rstrip(), 'Alineador de textos "Aligner"')
 
