@@ -77,7 +77,7 @@ def info(args):
 
 def main():
 
-    print("Converts TMX into two text files.")
+    print("Converts TMX into two text files and shows info.")
     print("Use -h for more information.")
 
     args = read_parameters()
