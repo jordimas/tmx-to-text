@@ -83,4 +83,5 @@ class ConvertTmx():
 
         tf_en.close()
         tf_ca.close()
+        fp.close()
         print("Wrote {0} strings".format(entries))

@@ -31,7 +31,7 @@ class TestConvertTmx(unittest.TestCase):
         return tmx_file
 
 
-    def test_convertion_omegat(self):
+    def test_conversion_simple(self):
         source_file = tempfile.NamedTemporaryFile().name
         target_file = tempfile.NamedTemporaryFile().name
 
@@ -50,7 +50,7 @@ class TestConvertTmx(unittest.TestCase):
         self.assertEquals(source_lines[0].rstrip(), '"Aligner" aligner utility')
         self.assertEquals(target_lines[0].rstrip(), 'Alineador de textos "Aligner"')
 
-    def test_convertion_omegat_lang(self):
+    def test_conversion_lang(self):
         source_file = tempfile.NamedTemporaryFile().name
         target_file = tempfile.NamedTemporaryFile().name
 
@@ -69,7 +69,7 @@ class TestConvertTmx(unittest.TestCase):
         self.assertEquals(source_lines[0].rstrip(), '"Aligner" aligner utility')
         self.assertEquals(target_lines[0].rstrip(), 'Alineador de textos "Aligner"')
 
-    def test_convertion_omegat_lang2(self):
+    def test_conversion_omegat_lang2(self):
         source_file = tempfile.NamedTemporaryFile().name
         target_file = tempfile.NamedTemporaryFile().name
 
