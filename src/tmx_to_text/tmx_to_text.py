@@ -43,7 +43,7 @@ def read_parameters():
         action='store',
         default='en',
         dest='source_language',
-        help='Source text file'
+        help='Source language to export'
     )
 
     parser.add_option(
@@ -52,7 +52,7 @@ def read_parameters():
         type='string',
         action='store',
         dest='target_language',
-        help='Target text file'
+        help='Target language to export'
     )
 
     parser.add_option(
@@ -62,7 +62,7 @@ def read_parameters():
         action='store',
         dest='prefix',
         default='',
-        help='Filename prefix'
+        help='Filename prefix used in the generated text files'
     )
 
     parser.add_option(
@@ -87,7 +87,8 @@ def read_parameters():
 
 def main():
 
-    print("Converts TMX into two text files")
+    print("Converts TMX into two text files.")
+    print("Use -h for more information.")
 
     tmx_file, source, target, prefix, debug = read_parameters()
 
