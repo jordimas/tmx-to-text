@@ -18,13 +18,10 @@
 # Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 # Boston, MA 02111-1307, USA.
 
-from optparse import OptionParser
-from lxml import etree
-import xml.etree.ElementTree as ET
-import tracemalloc
 import datetime
+import resource
+from optparse import OptionParser
 from .converttmx import ConvertTmx
-
 
 
 def read_parameters():
@@ -87,7 +84,6 @@ def read_parameters():
     return options.tmx_file, options.source_language, options.target_language, options.prefix, options.debug
 
 
-import resource
 
 def main():
 
@@ -102,16 +98,12 @@ def main():
     txt_ca_file = f'{prefix}{source}-{target}.{target}'
 
     if debug:
-        #tracemalloc.start()
         start_time = datetime.datetime.now()
 
     convert = ConvertTmx(tmx_file, txt_en_file, txt_ca_file)
     convert.convert(source, target)
 
     if debug:
-        #current, peak = tracemalloc.get_traced_memory()
-        #print(f"Current memory usage is {current / 10**6}MB; Peak was {peak / 10**6}MB")
-        #tracemalloc.stop()
         max_rss = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / 1024 
         print(f"max_rss {max_rss} MB")
 
