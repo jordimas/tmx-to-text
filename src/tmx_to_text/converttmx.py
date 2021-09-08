@@ -18,8 +18,7 @@
 # Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 # Boston, MA 02111-1307, USA.
 
-from lxml import etree
-import xml.etree.ElementTree as ET
+import lxml.etree
 
 
 class ConvertTmx():
@@ -30,51 +29,57 @@ class ConvertTmx():
         self.ca_filename = ca_filename
 
     def convert(self, source_language, target_language):
-        parser = etree.XMLParser(recover=True)
-        tree = ET.parse(self.input_file, parser=parser)
-        root = tree.getroot()
         entries = 0
 
         tf_en = open(self.en_filename, 'w')
         tf_ca = open(self.ca_filename, 'w')
 
-        for tu_entry in root.iter('tu'):
+        fp = open(self.input_file, 'rb')
+        context = lxml.etree.iterparse(fp, events=['start', 'end'], recover=True)
 
-            entry_id = None
-            if 'tuid' in tu_entry.attrib:
-                if len(tu_entry.attrib['tuid']):
-                    entry_id = 'id: {0}'.format(tu_entry.attrib['tuid'])
+        tu = {}
+        lang = ""
+        for action, elem in context:
 
-            source = ''
-            translation = ''
-            for tuv_entry in tu_entry:
-                if tuv_entry.tag != 'tuv':
+            if elem.tag == "tu" and action == "start":
+                tu = {}
+                elem.clear()
+                continue
+
+            if elem.tag == "tuv" and action == "start":
+                if "lang" in elem.attrib: 
+                    lang = elem.attrib['lang'].lower()
+                elif '{http://www.w3.org/XML/1998/namespace}lang' in elem.attrib:
+                    lang = elem.attrib['{http://www.w3.org/XML/1998/namespace}lang'].lower()
+
+                elem.clear()
+                continue
+
+            if elem.tag == "seg" and action == "end":
+                text = elem.text
+                if text is not None:
+                    tu[lang] = text
+                elem.clear()
+                continue
+
+            if elem.tag == "tu" and action == "end":
+                if len(tu) == 0:
+                    elem.clear()
                     continue
 
-                if '{http://www.w3.org/XML/1998/namespace}lang' in tuv_entry.attrib:
-                    llengua = tuv_entry.attrib['{http://www.w3.org/XML/1998/namespace}lang'].lower()
-                else:
-                    llengua = tuv_entry.attrib['lang'].lower()
+                source = tu[source_language]
+                translation = tu[target_language]
+                if len(source) == 0 or len(translation) == 0:
+                    continue
 
-                for seg_entry in tuv_entry.iter('seg'):
-                    if llengua == source_language:
-                        source = seg_entry.text
-                    elif llengua == target_language:
-                        translation = seg_entry.text
+                tf_en.write(source + "\n")
+                tf_ca.write(translation + "\n")
 
-            if source is None or translation is None:
-                continue
+                entries = entries + 1
+                tu.clear()
 
-            source = source.rstrip().replace("\n", "")
-            translation = translation.rstrip().replace("\n", "")
+                elem.clear()
 
-            if len(source) == 0 or len(translation) == 0:
-                continue
-
-            tf_en.write(source + "\n")
-            tf_ca.write(translation + "\n")
-
-            entries = entries + 1
 
         tf_en.close()
         tf_ca.close()
