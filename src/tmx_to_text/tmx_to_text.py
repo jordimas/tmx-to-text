@@ -21,14 +21,15 @@
 import datetime
 import resource
 from .converttmx import ConvertTmx
+from .infotmx import InfoTmx
 import argparse
 
 def read_parameters():
 
     parser = argparse.ArgumentParser()
     subparser = parser.add_subparsers(dest='command')
-#    info = subparser.add_parser('info')
-#    info.add_argument('-f', type=str, dest='tmx_file', required=True, help= "TMX file to convert")
+    info = subparser.add_parser('info')
+    info.add_argument('-f', type=str, dest='tmx_file', required=True, help= "TMX file to show info")
 
     convert = subparser.add_parser('convert')
     convert.add_argument('-f', type=str, dest='tmx_file', required=True, help= "TMX file to convert")
@@ -39,15 +40,7 @@ def read_parameters():
     args = parser.parse_args()
     return args
 
-def main():
-
-    print("Converts TMX into two text files.")
-    print("Use -h for more information.")
-
-    args = read_parameters()
-    if args.command != "convert":
-        return
-
+def convert(args):
     tmx_file = args.tmx_file
     source = args.source_lang
     target = args.target_lang
@@ -72,6 +65,26 @@ def main():
 
         s = 'Execution time: {0}'.format(datetime.datetime.now() - start_time)
         print(s)
+
+def info(args):
+    tmx_file = args.tmx_file
+
+    info = InfoTmx(args.tmx_file)
+    languages = info.get_information()
+    for language in languages.keys():
+        sentences = languages[language]
+        print(f"language '{language}' - sentences: {sentences}")
+
+def main():
+
+    print("Converts TMX into two text files.")
+    print("Use -h for more information.")
+
+    args = read_parameters()
+    if args.command == "convert":
+        convert(args)
+    elif args.command == "info":
+        info(args)
 
 if __name__ == "__main__":
     main()
