@@ -20,79 +20,41 @@
 
 import datetime
 import resource
-from optparse import OptionParser
 from .converttmx import ConvertTmx
-
+import argparse
 
 def read_parameters():
-    parser = OptionParser()
 
-    parser.add_option(
-        '-f',
-        '--tmx-file',
-        type='string',
-        action='store',
-        dest='tmx_file',
-        help='tmx File to convert to Text'
-    )
+    parser = argparse.ArgumentParser()
+    subparser = parser.add_subparsers(dest='command')
+#    info = subparser.add_parser('info')
+#    info.add_argument('-f', type=str, dest='tmx_file', required=True, help= "TMX file to convert")
 
-    parser.add_option(
-        '-s',
-        '--source_lang',
-        type='string',
-        action='store',
-        default='en',
-        dest='source_language',
-        help='Source language to export'
-    )
-
-    parser.add_option(
-        '-t',
-        '--target_lang',
-        type='string',
-        action='store',
-        dest='target_language',
-        help='Target language to export'
-    )
-
-    parser.add_option(
-        '-p',
-        '--prefix',
-        type='string',
-        action='store',
-        dest='prefix',
-        default='',
-        help='Filename prefix used in the generated text files'
-    )
-
-    parser.add_option(
-        '-d',
-        '--debug',
-        action='store_true',
-        dest='debug',
-        default=False,
-        help=u'Debug memory and execution time'
-    )
-
-    (options, args) = parser.parse_args()
-    if options.tmx_file is None:
-        parser.error('TMX file not given')
-
-    if options.target_language is None:
-        parser.error('target_language file not given')
-
-    return options.tmx_file, options.source_language, options.target_language, options.prefix, options.debug
-
-
+    convert = subparser.add_parser('convert')
+    convert.add_argument('-f', type=str, dest='tmx_file', required=True, help= "TMX file to convert")
+    convert.add_argument('-s', '--source_lang', type=str, required=True, dest='source_lang', help="Source language to export")
+    convert.add_argument('-t', '--target_lang', type=str, required=True, dest='target_lang', help="Target language to export")
+    convert.add_argument('-p', '--prefix', type=str, dest='prefix', default='', help="Filename prefix used in the generated text files")
+    convert.add_argument('-d', '--debug', action='store_true', default=False, dest='debug', help="Debug memory and execution time")
+    args = parser.parse_args()
+    return args
 
 def main():
 
     print("Converts TMX into two text files.")
     print("Use -h for more information.")
 
-    tmx_file, source, target, prefix, debug = read_parameters()
+    args = read_parameters()
+    if args.command != "convert":
+        return
 
-    if len(prefix) > 0:
+    tmx_file = args.tmx_file
+    source = args.source_lang
+    target = args.target_lang
+    prefix = args.prefix
+    debug = args.debug
+
+    if prefix:
         prefix = prefix + "."
 
     txt_en_file = f'{prefix}{source}-{target}.{source}'
