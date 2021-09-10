@@ -67,9 +67,9 @@ class ConvertTmx():
                     elem.clear()
                     continue
 
-                source = tu[source_language]
-                translation = tu[target_language]
-                if len(source) == 0 or len(translation) == 0:
+                source = tu.get(source_language)
+                translation = tu.get(target_language)
+                if not source or not translation:
                     continue
 
                 tf_en.write(source + "\n")

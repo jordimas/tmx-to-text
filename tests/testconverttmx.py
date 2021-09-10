@@ -27,9 +27,16 @@ class TestConvertTmx(unittest.TestCase):
     def _get_tmx_file(self, filename):
         tmx_file = path.dirname(path.realpath(__file__))
         tmx_file += '/data/{0}'.format(filename)
-
         return tmx_file
 
+    def _get_lines(self, source_file, target_file):
+        with open(source_file) as file:
+            source_lines = file.readlines()
+
+        with open(target_file) as file:
+            target_lines = file.readlines()
+
+        return source_lines, target_lines
 
     def test_conversion_simple(self):
         source_file = tempfile.NamedTemporaryFile().name
@@ -39,12 +46,7 @@ class TestConvertTmx(unittest.TestCase):
         convertTmx = ConvertTmx(tmx_file, source_file, target_file)
         convertTmx.convert("en", "ca")
 
-        with open(source_file) as file:
-            source_lines = file.readlines()
-
-        with open(target_file) as file:
-            target_lines = file.readlines()
-
+        source_lines, target_lines = self._get_lines(source_file, target_file)
         self.assertEquals(1, len(source_lines))
         self.assertEquals(1, len(target_lines))
         self.assertEquals(source_lines[0].rstrip(), '"Aligner" aligner utility')
@@ -58,18 +60,13 @@ class TestConvertTmx(unittest.TestCase):
         convertTmx = ConvertTmx(tmx_file, source_file, target_file)
         convertTmx.convert("en", "ca")
 
-        with open(source_file) as file:
-            source_lines = file.readlines()
-
-        with open(target_file) as file:
-            target_lines = file.readlines()
-
+        source_lines, target_lines = self._get_lines(source_file, target_file)
         self.assertEquals(1, len(source_lines))
         self.assertEquals(1, len(target_lines))
         self.assertEquals(source_lines[0].rstrip(), '"Aligner" aligner utility')
         self.assertEquals(target_lines[0].rstrip(), 'Alineador de textos "Aligner"')
 
-    def test_conversion_omegat_lang2(self):
+    def test_conversion_simple_long_lang(self):
         source_file = tempfile.NamedTemporaryFile().name
         target_file = tempfile.NamedTemporaryFile().name
 
@@ -77,12 +74,7 @@ class TestConvertTmx(unittest.TestCase):
         convertTmx = ConvertTmx(tmx_file, source_file, target_file)
         convertTmx.convert("en", "ca")
 
-        with open(source_file) as file:
-            source_lines = file.readlines()
-
-        with open(target_file) as file:
-            target_lines = file.readlines()
-
+        source_lines, target_lines = self._get_lines(source_file, target_file)
         self.assertEquals(2, len(source_lines))
         self.assertEquals(2, len(target_lines))
         self.assertEquals(source_lines[0].rstrip(), 'And, in the best case, freedom will compensate us.')
@@ -91,6 +83,17 @@ class TestConvertTmx(unittest.TestCase):
         self.assertEquals(source_lines[1].rstrip(), '"Aligner" aligner utility')
         self.assertEquals(target_lines[1].rstrip(), 'Alineador de textos "Aligner"')
 
+    def test_conversion_simple_lang_does_exits(self):
+        source_file = tempfile.NamedTemporaryFile().name
+        target_file = tempfile.NamedTemporaryFile().name
+
+        tmx_file = self._get_tmx_file('error.tmx')
+        convertTmx = ConvertTmx(tmx_file, source_file, target_file)
+        convertTmx.convert("de", "nl")
+
+        source_lines, target_lines = self._get_lines(source_file, target_file)
+        self.assertEquals(0, len(source_lines))
+        self.assertEquals(0, len(target_lines))
 
 if __name__ == '__main__':
     unittest.main()
