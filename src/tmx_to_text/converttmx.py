@@ -72,6 +72,9 @@ class ConvertTmx():
                 if not source or not translation:
                     continue
 
+                source = source.replace("\n", '')
+                translation = translation.replace("\n", '')
+
                 tf_en.write(source + "\n")
                 tf_ca.write(translation + "\n")
 
