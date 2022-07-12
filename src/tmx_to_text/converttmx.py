@@ -88,3 +88,5 @@ class ConvertTmx():
         tf_ca.close()
         fp.close()
         print("Wrote {0} strings".format(entries))
+        if entries == 0:
+            print(f"Make sure using 'info' command that there are actually strings for both languages '{source_language}' and '{target_language}'")
