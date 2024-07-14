@@ -27,7 +27,7 @@ optional arguments:
   -f TMX_FILE  TMX file to show info
 
 
-usage: tmx-to-text convert [-h] -f TMX_FILE -s SOURCE_LANG -t TARGET_LANG [-p PREFIX] [-d]
+usage: tmx-to-text convert [-h] -f TMX_FILE -s SOURCE_LANG -t TARGET_LANG [-p PREFIX] [-d] [-x] [-a]
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -39,7 +39,8 @@ optional arguments:
   -p PREFIX, --prefix PREFIX
                         Filename prefix used in the generated text files
   -d, --debug           Debug memory and execution time
- Debug memory and execution time
+  -x, --nodup_source    Remove duplicates based on source
+  -a, --nodup_target    Remove duplicates based on target
 
 ```
 
