@@ -69,8 +69,6 @@ def convert(args):
         print(s)
 
 def info(args):
-    tmx_file = args.tmx_file
-
     info = InfoTmx(args.tmx_file)
     languages = info.get_information()
     for language in languages.keys():
