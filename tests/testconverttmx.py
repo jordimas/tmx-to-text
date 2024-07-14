@@ -95,5 +95,64 @@ class TestConvertTmx(unittest.TestCase):
         self.assertEquals(0, len(source_lines))
         self.assertEquals(0, len(target_lines))
 
+    def test_conversion_nodup_source_no(self):
+        source_file = tempfile.NamedTemporaryFile().name
+        target_file = tempfile.NamedTemporaryFile().name
+
+        tmx_file = self._get_tmx_file('duplicate_source.xml')
+        convertTmx = ConvertTmx(tmx_file, source_file, target_file)
+        convertTmx.convert("en", "ca")
+
+        source_lines, target_lines = self._get_lines(source_file, target_file)
+        self.assertEquals(2, len(source_lines))
+        self.assertEquals(2, len(target_lines))
+        self.assertEquals(source_lines[0].rstrip(), '"Aligner" aligner utility')
+        self.assertEquals(target_lines[0].rstrip(), 'Alineador de textos "Aligner" 1')
+        self.assertEquals(source_lines[1].rstrip(), '"Aligner" aligner utility')
+        self.assertEquals(target_lines[1].rstrip(), 'Alineador de textos "Aligner" 2')
+        
+    def test_conversion_nodup_source_yes(self):
+        source_file = tempfile.NamedTemporaryFile().name
+        target_file = tempfile.NamedTemporaryFile().name
+
+        tmx_file = self._get_tmx_file('duplicate_source.xml')
+        convertTmx = ConvertTmx(tmx_file, source_file, target_file)
+        convertTmx.convert("en", "ca", True)
+
+        source_lines, target_lines = self._get_lines(source_file, target_file)
+        self.assertEquals(1, len(source_lines))
+        self.assertEquals(1, len(target_lines))
+        self.assertEquals(source_lines[0].rstrip(), '"Aligner" aligner utility')
+        self.assertEquals(target_lines[0].rstrip(), 'Alineador de textos "Aligner" 1')
+
+    def test_conversion_nodup_target_no(self):
+        source_file = tempfile.NamedTemporaryFile().name
+        target_file = tempfile.NamedTemporaryFile().name
+
+        tmx_file = self._get_tmx_file('duplicate_target.xml')
+        convertTmx = ConvertTmx(tmx_file, source_file, target_file)
+        convertTmx.convert("en", "ca")
+
+        source_lines, target_lines = self._get_lines(source_file, target_file)
+        self.assertEquals(2, len(source_lines))
+        self.assertEquals(2, len(target_lines))
+        self.assertEquals(source_lines[0].rstrip(), '"Aligner" aligner utility 1')
+        self.assertEquals(target_lines[0].rstrip(), 'Alineador de textos "Aligner"')
+        self.assertEquals(source_lines[1].rstrip(), '"Aligner" aligner utility 2')
+        self.assertEquals(target_lines[1].rstrip(), 'Alineador de textos "Aligner"')
+
+    def test_conversion_nodup_target_yes(self):
+        source_file = tempfile.NamedTemporaryFile().name
+        target_file = tempfile.NamedTemporaryFile().name
+
+        tmx_file = self._get_tmx_file('duplicate_target.xml')
+        convertTmx = ConvertTmx(tmx_file, source_file, target_file)
+        convertTmx.convert("en", "ca", False, True)
+
+        source_lines, target_lines = self._get_lines(source_file, target_file)
+        self.assertEquals(1, len(source_lines))
+        self.assertEquals(1, len(target_lines))
+        self.assertEquals(source_lines[0].rstrip(), '"Aligner" aligner utility 1')
+        self.assertEquals(target_lines[0].rstrip(), 'Alineador de textos "Aligner"')
 if __name__ == '__main__':
     unittest.main()

@@ -37,6 +37,8 @@ def read_parameters():
     convert.add_argument('-t', '--target_lang', type=str, required=True, dest='target_lang', help="Target language to export")
     convert.add_argument('-p', '--prefix', type=str, dest='prefix', default='', help="Filename prefix used in the generated text files")
     convert.add_argument('-d', '--debug', action='store_true', default=False, dest='debug', help="Debug memory and execution time")
+    convert.add_argument('-x', '--nodup_source', action='store_true', default=False, dest='nodup_source', help="Remove duplicates based on source")
+    convert.add_argument('-a', '--nodup_target', action='store_true', default=False, dest='nodup_target', help="Remove duplicates based on target")
     args = parser.parse_args()
     return args
 
@@ -57,7 +59,7 @@ def convert(args):
         start_time = datetime.datetime.now()
 
     convert = ConvertTmx(tmx_file, txt_en_file, txt_ca_file)
-    convert.convert(source, target)
+    convert.convert(source, target, args.nodup_source, args.nodup_target)
 
     if debug:
         max_rss = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / 1024 

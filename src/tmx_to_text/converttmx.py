@@ -28,9 +28,12 @@ class ConvertTmx():
         self.en_filename = en_filename
         self.ca_filename = ca_filename
 
-    def convert(self, source_language, target_language):
+    def convert(self, source_language, target_language, nodup_source = False, nodup_target = False):
         entries = 0
-
+        duplicated_source = 0
+        duplicated_target = 0
+        seen_sources = set()
+        seen_targets = set()
         tf_en = open(self.en_filename, 'w')
         tf_ca = open(self.ca_filename, 'w')
 
@@ -75,18 +78,38 @@ class ConvertTmx():
                 source = source.replace("\n", '')
                 translation = translation.replace("\n", '')
 
-                tf_en.write(source + "\n")
-                tf_ca.write(translation + "\n")
+                write_entry = True
+                if nodup_source:
+                    hash_source = hash(source)
+                    if hash_source in seen_sources:
+                        write_entry = False
+                        duplicated_source += 1
+                    else:
+                        seen_sources.add(hash_source)
 
-                entries = entries + 1
+                if nodup_target:
+                    hash_target = hash(translation)
+                    if hash_target in seen_targets:
+                        write_entry = False
+                        duplicated_target += 1
+                    else:
+                        seen_targets.add(hash_target)
+
+                if write_entry:
+                    tf_en.write(source + "\n")
+                    tf_ca.write(translation + "\n")
+                    entries = entries + 1
+
                 tu.clear()
-
                 elem.clear()
-
 
         tf_en.close()
         tf_ca.close()
         fp.close()
-        print("Wrote {0} strings".format(entries))
+        print(f"Wrote {entries} strings")
+        if nodup_source:
+            print(f"Duplicates {duplicated_source} strings in source")
+        if nodup_target:
+            print(f"Duplicates {duplicated_target} strings in target")
         if entries == 0:
             print(f"Make sure using 'info' command that there are actually strings for both languages '{source_language}' and '{target_language}'")
