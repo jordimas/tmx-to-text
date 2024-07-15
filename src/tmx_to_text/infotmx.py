@@ -55,6 +55,9 @@ class InfoTmx():
 
                 elem.clear()
 
+            while elem.getprevious() is not None:
+                del elem.getparent()[0]
+
         fp.close()
         return lang_sentences
 
