@@ -73,6 +73,7 @@ class ConvertTmx():
                 source = tu.get(source_language)
                 translation = tu.get(target_language)
                 if not source or not translation:
+                    elem.clear()
                     continue
 
                 source = source.replace("\n", '')
