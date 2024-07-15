@@ -30,6 +30,7 @@ def read_parameters():
     subparser = parser.add_subparsers(dest='command')
     info = subparser.add_parser('info')
     info.add_argument('-f', type=str, dest='tmx_file', required=True, help= "TMX file to show info")
+    info.add_argument('-d', '--debug', action='store_true', default=False, dest='debug', help="Debug memory and execution time")
 
     convert = subparser.add_parser('convert')
     convert.add_argument('-f', type=str, dest='tmx_file', required=True, help= "TMX file to convert")
@@ -42,12 +43,18 @@ def read_parameters():
     args = parser.parse_args()
     return args
 
+def _show_debug(start_time):
+    max_rss = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / 1024
+    print(f"max_rss {max_rss} MB")
+
+    s = 'Execution time: {0}'.format(datetime.datetime.now() - start_time)
+    print(s)
+
 def convert(args):
     tmx_file = args.tmx_file
     source = args.source_lang
     target = args.target_lang
     prefix = args.prefix
-    debug = args.debug
 
     if prefix:
         prefix = prefix + "."
@@ -55,18 +62,8 @@ def convert(args):
     txt_en_file = f'{prefix}{source}-{target}.{source}'
     txt_ca_file = f'{prefix}{source}-{target}.{target}'
 
-    if debug:
-        start_time = datetime.datetime.now()
-
     convert = ConvertTmx(tmx_file, txt_en_file, txt_ca_file)
     convert.convert(source, target, args.nodup_source, args.nodup_target)
-
-    if debug:
-        max_rss = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / 1024 
-        print(f"max_rss {max_rss} MB")
-
-        s = 'Execution time: {0}'.format(datetime.datetime.now() - start_time)
-        print(s)
 
 def info(args):
     info = InfoTmx(args.tmx_file)
@@ -75,16 +72,25 @@ def info(args):
         sentences = languages[language]
         print(f"language '{language}' - sentences: {sentences}")
 
+
 def main():
 
     print("Converts TMX into two text files and shows info.")
     print("Use -h for more information.")
 
     args = read_parameters()
+    debug = args.debug
+
+    if debug:
+        start_time = datetime.datetime.now()
+
     if args.command == "convert":
         convert(args)
     elif args.command == "info":
         info(args)
+
+    if debug:
+        _show_debug(start_time)
 
 if __name__ == "__main__":
     main()
